@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // Il computer deve generare 16 numeri casuali da 1 a 100.
+        // In seguito deve chiedere all'utente di inserire un numero da 1 a
+        // 100 alla volta, se il numero è presente nella lista dei numeri
+        // generati, la partita termina, altrimenti continua chiedendo
+        // all'utente un altro numero.
+        // La partita termina quando il giocatore inserisce un numero
+        // "vietato" o raggiunge il numero massimo possibile di numeri
+        // consentiti.
+        // Al termine della partita il software deve comunicare il punteggio,
+        // cioè il numero di volte che l'utente ha inserito un numero
+        // consentito.
+        // BONUS: all'inizio il software richiede anche una difficoltà
+        // all'utente che cambia il range di numeri casuali.
+        // Con difficoltà 0=> da 1 a 100, con difficoltà 1 => da 1 a 80 con
+        // difficoltà 2=> da 1 a 50
+        //input utente
+        var sceltaDifficolta = parseInt(prompt("scegli la difficolta da 1 a 3"));
+        while (sceltaDifficolta < 1 || sceltaDifficolta > 3 || isNaN(sceltaDifficolta)) {
+            sceltaDifficolta = parseInt(prompt("Errore inserisci 1 2 o 3"));
+        }
+        // questa funzione genera la qtà di numeri da generare in base al livello di difficoltà
+        function mappatura(sceltaDifficolta) {
+            var totalNumber = 0;
+            switch (sceltaDifficolta) {
+                case 1:
+                    totalNumber = 100;
+                    break;
+                case 2:
+                    totalNumber = 80;
+                    break;
+                case 3:
+                    totalNumber = 50;
+                    break;
+            }
+            return totalNumber;
+        }
+        //CREO UNA LISTA DI NUMERI VIETATI(RANDOM) IN MANIERA DINAMICA
+        function arrayNumeriBannati(qtaNum, qtaBombe) {
+            var array_numeriVietati = [];
+            var i = 0;
+            //CREO LA LISTA DI NUMERI BANNATI NON DOPPI
+            while (i < qtaBombe) {
+                var numeriVietati = Math.floor(Math.random() * qtaNum) + 1;
+                if (!array_numeriVietati.includes(numeriVietati)) {
+                    array_numeriVietati.push(numeriVietati);
+                    i++;
+                }
+            }
+            return array_numeriVietati;
+        }
+        //fx che esegue la logica in maniera dinamica
+        function logica(quantitaNumeri, bombe) {
+            var array_numeri_inseriti = [];
+            var count = 0;
+            var numeroDoppio = false;
+            var arrBombe = arrayNumeriBannati(quantitaNumeri, bombe);
+            var qtaNumeri = quantitaNumeri - (arrBombe.length + 1);
+            console.log(arrBombe);
+            console.log(qtaNumeri);
+            while (count < qtaNumeri) {
+                if (!numeroDoppio) {
+                    var numeroUtente = parseInt(prompt("inserisci un numero da 1 a " + quantitaNumeri));
+                    if (numeroUtente > quantitaNumeri) {
+                        alert("Non puoi inserire un numero maggiore di " + quantitaNumeri);
+                    }
+                } else {
+                    numeroUtente = parseInt(prompt("Numero " + numeroUtente + " già inserito. Inseriscine un'altro"));
+                }
+                //se il numero non è già stato inserito e non fa parte di quelli bannati ed è minore di n muneri
+                if(!array_numeri_inseriti.includes(numeroUtente) && !arrBombe.includes(numeroUtente) && (numeroUtente <= quantitaNumeri)) {
+                    //push del numero
+                    array_numeri_inseriti.push(numeroUtente);
+                    //aumento del contatore
+                    count++;
+                    numeroDoppio = false;
+                } else if (array_numeri_inseriti.includes(numeroUtente)) {
+                    numeroDoppio = true;
+                  } else if (arrBombe.includes(numeroUtente)) {
+                    alert("HAI PERSO");
+                    document.writeln("hai totalizzato " + count + " punto/i.");
+                    break;
+                } else if (count === qtaNumeri) {
+                    alert("HAI VINTO");
+                }
+            }
+        }
+
+
+        logica(mappatura(sceltaDifficolta), 20);
+    </script>
+</body>
+</html>
